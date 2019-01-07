@@ -6,71 +6,151 @@
     >
       <v-toolbar-title>日報作成</v-toolbar-title>
     </v-toolbar>
-    <v-container grid-list-md text-xs-center>
-      <v-layout row wrap>
-        <v-flex xs12 md6>
-          <v-card>
-            <v-card-title>Input</v-card-title>
-            <div class="text-xs-right">
-              <v-btn color="success" v-on:click="addTask">追加&nbsp;<v-icon>library_add</v-icon></v-btn>
-            </div>
-              <draggable v-model="tasks" :options="{handle:'.grip-area'}">
-                <v-card v-for="(task, index) in tasks" :key="task.id">
-                  <v-card-text raised>
-                    <v-form>
-                      <v-layout wrap>
-                        <v-flex md1>
-                          <div class="grip-area"></div>
-                        </v-flex>
-                        <v-flex md4>
-                          <v-text-field v-model="task.category" label="カテゴリ"></v-text-field>
-                        </v-flex>
-                        <v-flex md4>
-                         <v-text-field v-model="task.content" label="内容"></v-text-field>
-                        </v-flex>
-                        <v-flex md2>
-                          <v-text-field v-model="task.time" type="number" step="15" min="0" label="時間" suffix="分"></v-text-field>
-                        </v-flex>
-                        <v-flex md1>
-                          <v-btn small icon color="error" v-on:click="removeTask(index)">
-                            <v-icon small>delete_forever</v-icon>
-                          </v-btn>
-                        </v-flex>
-                      </v-layout>
-                    </v-form>
-                  </v-card-text>
-                </v-card>
-              </draggable>
-          </v-card>
-        </v-flex>
-        <v-flex xs12 md6>
-          <v-card>
-            <v-card-title>Output</v-card-title>
-            <v-layout wrap>
-              <v-flex xs6 offset-md1 md2>
-                <v-text-field type="time" v-model="openingTime" label="開始時刻"></v-text-field>
-              </v-flex>
-              <v-flex xs6 md9>
+    <v-tabs fixed-tabs>
+      <v-tab :key="1">
+        予定
+      </v-tab>
+      <v-tab :key="2">
+        実績
+      </v-tab>
+
+      <v-tab-item :key="1">
+        <v-container grid-list-md text-xs-center>
+          <v-layout row wrap>
+            <v-flex xs12 md6>
+              <v-card>
+                <v-card-title>Input</v-card-title>
                 <div class="text-xs-right">
-                  <v-btn color="primary" class="clipcopy" data-clipboard-target="#daily-report">
-                    コピー&nbsp;<v-icon>file_copy</v-icon>
-                  </v-btn>
+                  <v-btn color="success" v-on:click="addTask(taskPlans)">追加&nbsp;<v-icon>library_add</v-icon></v-btn>
                 </div>
-              </v-flex>
-              <v-flex xs12 md12>
-                <v-textarea
-                        box
-                        readonly
-                        v-model="dailyReport"
-                        :rows="dailyReportRows"
-                        id="daily-report"
-                ></v-textarea>
-              </v-flex>
-            </v-layout>
-          </v-card>
-        </v-flex>
-      </v-layout>
-    </v-container>
+                  <draggable v-model="taskPlans" :options="{handle:'.grip-area'}">
+                    <v-card v-for="(task, index) in taskPlans" :key="task.id">
+                      <v-card-text raised>
+                        <v-form>
+                          <v-layout wrap>
+                            <v-flex md1>
+                              <div class="grip-area"></div>
+                            </v-flex>
+                            <v-flex md4>
+                              <v-text-field v-model="task.category" label="カテゴリ"></v-text-field>
+                            </v-flex>
+                            <v-flex md4>
+                             <v-text-field v-model="task.content" label="内容"></v-text-field>
+                            </v-flex>
+                            <v-flex md2>
+                              <v-text-field v-model="task.time" type="number" step="15" min="0" label="時間" suffix="分"></v-text-field>
+                            </v-flex>
+                            <v-flex md1>
+                              <v-btn small icon color="error" v-on:click="removeTask(taskPlans, index)">
+                                <v-icon small>delete_forever</v-icon>
+                              </v-btn>
+                            </v-flex>
+                          </v-layout>
+                        </v-form>
+                      </v-card-text>
+                    </v-card>
+                  </draggable>
+              </v-card>
+            </v-flex>
+            <v-flex xs12 md6>
+              <v-card>
+                <v-card-title>Output</v-card-title>
+                <v-layout wrap>
+                  <v-flex xs6 offset-md1 md2>
+                    <v-text-field type="time" v-model="openingTime" label="開始時刻"></v-text-field>
+                  </v-flex>
+                  <v-flex xs6 md9>
+                    <div class="text-xs-right">
+                      <v-btn color="primary" class="clipcopy" data-clipboard-target="#daily-report-plan">
+                        コピー&nbsp;<v-icon>file_copy</v-icon>
+                      </v-btn>
+                    </div>
+                  </v-flex>
+                  <v-flex xs12 md12>
+                    <v-textarea
+                            box
+                            readonly
+                            v-model="dailyReportPlan"
+                            :rows="dailyReportPlanRows"
+                            id="daily-report-plan"
+                    ></v-textarea>
+                  </v-flex>
+                </v-layout>
+              </v-card>
+            </v-flex>
+          </v-layout>
+        </v-container>
+      </v-tab-item>
+
+      <v-tab-item :key="2">
+        <v-container grid-list-md text-xs-center>
+          <v-layout row wrap>
+            <v-flex xs12 md6>
+              <v-card>
+                <v-card-title>Input</v-card-title>
+                <div class="text-xs-right">
+                  <v-btn color="success" v-on:click="copyTaskPlans()">予定をコピー&nbsp;<v-icon>file_copy</v-icon></v-btn>
+                  <v-btn color="success" v-on:click="addTask(taskResults)">追加&nbsp;<v-icon>library_add</v-icon></v-btn>
+                </div>
+                <draggable v-model="taskResults" :options="{handle:'.grip-area'}">
+                  <v-card v-for="(task, index) in taskResults" :key="task.id">
+                    <v-card-text raised>
+                      <v-form>
+                        <v-layout wrap>
+                          <v-flex md1>
+                            <div class="grip-area"></div>
+                          </v-flex>
+                          <v-flex md4>
+                            <v-text-field v-model="task.category" label="カテゴリ"></v-text-field>
+                          </v-flex>
+                          <v-flex md4>
+                            <v-text-field v-model="task.content" label="内容"></v-text-field>
+                          </v-flex>
+                          <v-flex md2>
+                            <v-text-field v-model="task.time" type="number" step="15" min="0" label="時間" suffix="分"></v-text-field>
+                          </v-flex>
+                          <v-flex md1>
+                            <v-btn small icon color="error" v-on:click="removeTask(taskResults, index)">
+                              <v-icon small>delete_forever</v-icon>
+                            </v-btn>
+                          </v-flex>
+                        </v-layout>
+                      </v-form>
+                    </v-card-text>
+                  </v-card>
+                </draggable>
+              </v-card>
+            </v-flex>
+            <v-flex xs12 md6>
+              <v-card>
+                <v-card-title>Output</v-card-title>
+                <v-layout wrap>
+                  <v-flex xs6 offset-md1 md2>
+                    <v-text-field type="time" v-model="openingTime" label="開始時刻"></v-text-field>
+                  </v-flex>
+                  <v-flex xs6 md9>
+                    <div class="text-xs-right">
+                      <v-btn color="primary" class="clipcopy" data-clipboard-target="#daily-report-result">
+                        コピー&nbsp;<v-icon>file_copy</v-icon>
+                      </v-btn>
+                    </div>
+                  </v-flex>
+                  <v-flex xs12 md12>
+                    <v-textarea
+                            box
+                            readonly
+                            v-model="dailyReportResult"
+                            :rows="dailyReportResultRows"
+                            id="daily-report-result"
+                    ></v-textarea>
+                  </v-flex>
+                </v-layout>
+              </v-card>
+            </v-flex>
+          </v-layout>
+        </v-container>
+      </v-tab-item>
+    </v-tabs>
     <v-snackbar
             v-model="copySuccess"
             top
@@ -86,6 +166,7 @@
         Close
       </v-btn>
     </v-snackbar>
+
   </v-app>
 </template>
 
@@ -104,25 +185,83 @@
         copySuccess: false,
         timeout: 2000,
         idIndex: 1,
-        tasks: [],
+        taskPlans: [],
+        taskResults: [],
         openingTime: "09:30"
       }
     },
     computed: {
-      dailyReport: function () {
+      dailyReportPlan: function () {
+        return this.generateDailyReportPlan()
+      },
+      dailyReportResult: function () {
         let dailyReportContents = ""
-        let breakDownArray = {}
 
+        dailyReportContents += this.generateDailyReportPlan()
+        dailyReportContents += "\n"
+
+        let dayString = this.generateDayString()
+        let resultTitle = "＜" + dayString + "の実績" + "＞" + "\n"
+        dailyReportContents += resultTitle
+
+        let startTime = this.openingTime
+        dailyReportContents += this.generateTaskContents(this.taskResults, startTime)
+        dailyReportContents += "\n"
+
+        let planBreakDownArray = this.generateBreakDownArray(this.taskPlans);
+        let resultBreakDownArray = this.generateBreakDownArray(this.taskResults);
+        let totalTime = 0
+        dailyReportContents += "＜実績の内訳＞" + "\n"
+        Object.keys(resultBreakDownArray).forEach(function(key) {
+          let hour = Math.round(this[key] * 100 / 60) / 100
+          totalTime += hour
+
+          let breakDownContent = ""
+          if (key in planBreakDownArray) {
+            let difference = Math.round((this[key] - planBreakDownArray[key]) * 100 / 60) / 100
+            let differenceString = difference > 0 ? ("+" + String(difference)) : String(difference)
+            breakDownContent = "【" + key + "】" + hour + "H (" + differenceString + "H)" + "\n"
+          } else {
+            breakDownContent = "【" + key + "】" + hour + "H (+" + String(hour) + "H)" + "\n"
+          }
+          dailyReportContents += breakDownContent
+        }, resultBreakDownArray);
+        let breakDownTotal = "\n" + "合計：" + totalTime + "H" + "\n"
+        dailyReportContents += breakDownTotal
+
+        return dailyReportContents
+      },
+      dailyReportPlanRows: function () {
+        return this.dailyReportPlan.split("\n").length
+      },
+      dailyReportResultRows: function () {
+        return this.dailyReportResult.split("\n").length
+      }
+    },
+    methods: {
+      addTask (tasks) {
+        tasks.push({id: this.idIndex, category: '', content: '', time: 0})
+        this.idIndex++
+      },
+      removeTask (tasks, index) {
+        tasks.splice(index, 1)
+      },
+      copyTaskPlans() {
+        this.taskResults = this.taskPlans
+      },
+      generateDayString() {
         let date = new Date ()
         let month = date.getMonth() + 1
         let day = date.getDate()
         let dayOfWeek = ["日", "月", "火", "水", "木", "金", "土"][date.getDay()]
-        let plansTitle = "＜" + month + "/" + day + "(" + dayOfWeek + ")の予定" + "＞" + "\n"
+        let dayString = month + "/" + day + "(" + dayOfWeek + ")"
 
-        dailyReportContents += plansTitle
+        return dayString
+      },
+      generateTaskContents(tasks, startTime) {
+        let taskContents = "";
 
-        let startTime = this.openingTime
-        this.tasks.forEach(function (task) {
+        tasks.forEach(function (task) {
           let startTimeNumber = startTime.split(':')
           let endDate = new Date(2019, 1, 1, Number(startTimeNumber[0]), Number(startTimeNumber[1]))
           endDate.setMinutes(endDate.getMinutes() + Number(task.time))
@@ -132,18 +271,38 @@
           let taskContent = taskTerm + " 【" + task.category + "】" + task.content + "\n"
 
           startTime = endTime
-          dailyReportContents += taskContent
+          taskContents += taskContent
+        })
 
+        return taskContents
+      },
+      generateBreakDownArray(tasks) {
+        let breakDownArray = {}
+
+        tasks.forEach(function (task) {
           if (task.category in breakDownArray) {
             breakDownArray[task.category] += Number(task.time)
           } else {
             breakDownArray[task.category] = Number(task.time)
           }
         })
+
+        return breakDownArray
+      },
+      generateDailyReportPlan() {
+        let dailyReportContents = ""
+
+        let dayString = this.generateDayString()
+        let planTitle = "＜" + dayString + "の予定" + "＞" + "\n"
+        dailyReportContents += planTitle
+
+        let startTime = this.openingTime
+        dailyReportContents += this.generateTaskContents(this.taskPlans, startTime)
         dailyReportContents += "\n"
 
+        let breakDownArray = this.generateBreakDownArray(this.taskPlans);
         let totalTime = 0
-        dailyReportContents += "＜内訳＞" + "\n"
+        dailyReportContents += "＜予定の内訳＞" + "\n"
         Object.keys(breakDownArray).forEach(function(key) {
           let hour = Math.round(this[key] * 100 / 60) / 100
           totalTime += hour
@@ -154,18 +313,6 @@
         dailyReportContents += breakDownTotal
 
         return dailyReportContents
-      },
-      dailyReportRows: function () {
-        return this.dailyReport.split("\n").length
-      }
-    },
-    methods: {
-      addTask () {
-        this.tasks.push({id: this.idIndex, category: '', content: '', time: 0})
-        this.idIndex++
-      },
-      removeTask (index) {
-        this.tasks.splice(index, 1)
       }
     },
     mounted : function(){
