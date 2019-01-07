@@ -14,22 +14,24 @@
             <div class="text-xs-right">
               <v-btn color="success" v-on:click="addTask">追加&nbsp;<v-icon>library_add</v-icon></v-btn>
             </div>
-              <draggable v-model="tasks">
+              <draggable v-model="tasks" :options="{handle:'.grip-area'}">
                 <v-card v-for="(task, index) in tasks" :key="task.id">
                   <v-card-text raised>
                     <v-form>
                       <v-layout wrap>
-                        <v-flex xs12 md1></v-flex>
-                        <v-flex xs12 md4>
+                        <v-flex md1>
+                          <div class="grip-area"></div>
+                        </v-flex>
+                        <v-flex md4>
                           <v-text-field v-model="task.category" label="カテゴリ"></v-text-field>
                         </v-flex>
-                        <v-flex xs12 md4>
+                        <v-flex md4>
                          <v-text-field v-model="task.content" label="内容"></v-text-field>
                         </v-flex>
-                        <v-flex xs10 md2>
+                        <v-flex md2>
                           <v-text-field v-model="task.time" type="number" step="15" min="0" label="時間" suffix="分"></v-text-field>
                         </v-flex>
-                        <v-flex xs2 md1>
+                        <v-flex md1>
                           <v-btn small icon color="error" v-on:click="removeTask(index)">
                             <v-icon small>delete_forever</v-icon>
                           </v-btn>
@@ -179,5 +181,12 @@
 </script>
 
 <style>
-
+.grip-area {
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  background-image: radial-gradient(#bbb 20%, transparent 0);
+  background-position: 0 0, 1px 5px;
+  background-size: 3px 3px;
+}
 </style>
