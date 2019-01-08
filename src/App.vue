@@ -247,7 +247,9 @@
         tasks.splice(index, 1)
       },
       copyTaskPlans() {
-        this.taskResults = this.taskPlans
+        // 参照渡しされないように一度文字列化
+        let tmpTasks = JSON.stringify(this.taskPlans)
+        this.taskResults = JSON.parse(tmpTasks)
       },
       generateDayString() {
         let date = new Date ()
