@@ -190,6 +190,26 @@
         openingTime: "09:30"
       }
     },
+    watch: {
+      idIndex: function (val) {
+        localStorage.idIndex = val
+      },
+      taskPlans: {
+        handler: function (val) {
+          localStorage.taskPlans = JSON.stringify(val)
+        },
+        deep: true
+      },
+      taskResults: {
+        handler: function (val) {
+          localStorage.taskResults = JSON.stringify(val)
+        },
+        deep: true
+      },
+      openingTime: function (val) {
+        localStorage.openingTime = val
+      }
+    },
     computed: {
       dailyReportPlan: function () {
         return this.generateDailyReportPlan()
@@ -325,6 +345,21 @@
         e.clearSelection()
       }, this);
       // -- クリップボード設定ここまで
+
+      // ローカルストレージ取得
+      if (localStorage.idIndex) {
+        this.idIndex = localStorage.idIndex
+      }
+      if (localStorage.taskPlans) {
+        this.taskPlans = JSON.parse(localStorage.taskPlans)
+      }
+      if (localStorage.taskResults) {
+        this.taskResults = JSON.parse(localStorage.taskResults)
+      }
+      if (localStorage.openingTime) {
+        this.openingTime = localStorage.openingTime
+      }
+
     },
   }
 </script>
