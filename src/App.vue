@@ -92,7 +92,9 @@
               <v-card>
                 <v-card-title>Input</v-card-title>
                 <div class="text-xs-right">
-                  <v-btn class="left" color="success" v-on:click="copyTaskPlans()">予定をコピー&nbsp;<v-icon>file_copy</v-icon></v-btn>
+                  <v-btn class="left" color="success" v-on:click="copyTaskPlans()">
+                    予定から実績を作成&nbsp;&nbsp;<v-icon>input</v-icon>
+                  </v-btn>
                   <v-btn color="success" v-on:click="addTask(taskResults)">追加&nbsp;<v-icon>library_add</v-icon></v-btn>
                 </div>
                 <draggable v-model="taskResults" :options="{handle:'.grip-area'}">
