@@ -21,6 +21,9 @@
               <v-card>
                 <v-card-title>Input</v-card-title>
                 <div class="text-xs-right">
+                  <v-btn class="left" color="error" v-on:click="reset()">
+                    予定と実績を全て削除&nbsp;&nbsp;<v-icon>delete_forever</v-icon>
+                  </v-btn>
                   <v-btn color="success" v-on:click="addTask(taskPlans)">追加&nbsp;<v-icon>library_add</v-icon></v-btn>
                 </div>
                   <draggable v-model="taskPlans" :options="{handle:'.grip-area'}">
@@ -174,6 +177,22 @@
         Close
       </v-btn>
     </v-snackbar>
+    <v-snackbar
+            v-model="deleteSuccess"
+            top
+            right
+            :timeout="timeout"
+    >
+      全てのタスクを削除しました
+      <v-btn
+              color="pink"
+              flat
+              @click="deleteSuccess = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
+
 
   </v-app>
 </template>
@@ -191,6 +210,7 @@
       return {
         clipBoard: null,
         copySuccess: false,
+        deleteSuccess: false,
         timeout: 2000,
         idIndex: 1,
         taskPlans: [],
@@ -280,6 +300,14 @@
       }
     },
     methods: {
+      reset () {
+        this.idIndex = 1
+        this.taskPlans = []
+        this.taskResults = []
+        this.openingTime = "09:30"
+
+        this.deleteSuccess = true
+      },
       addTask (tasks) {
         tasks.push({id: this.idIndex, category: '', content: '', time: 0})
         this.idIndex++
