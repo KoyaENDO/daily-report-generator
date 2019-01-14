@@ -282,7 +282,7 @@
           if (!(key in resultBreakDownArray)) {
             let hour = Math.round(this[key] * 100 / 60) / 100
 
-            let breakDownContent = "【" + key + "】0.0H (-" + hour.toFixed() + "H)" + "\n"
+            let breakDownContent = "【" + key + "】0.0H (-" + hour.toFixed(1) + "H)" + "\n"
             dailyReportContents += breakDownContent
           }
         }, planBreakDownArray)
