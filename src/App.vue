@@ -238,6 +238,8 @@
         let resultBreakDownArray = this.generateBreakDownArray(this.taskResults);
         let totalTime = 0
         dailyReportContents += "＜実績の内訳＞" + "\n"
+
+        // 実績をもとに内訳を算出
         Object.keys(resultBreakDownArray).forEach(function(key) {
           let hour = Math.round(this[key] * 100 / 60) / 100
           totalTime += hour
@@ -252,6 +254,17 @@
           }
           dailyReportContents += breakDownContent
         }, resultBreakDownArray);
+
+        // 予定をもとに実績になかったものの内訳を算出
+        Object.keys(planBreakDownArray).forEach(function(key) {
+          if (!(key in resultBreakDownArray)) {
+            let hour = Math.round(this[key] * 100 / 60) / 100
+
+            let breakDownContent = "【" + key + "】0H (-" + String(hour) + "H)" + "\n"
+            dailyReportContents += breakDownContent
+          }
+        }, planBreakDownArray)
+
         let breakDownTotal = "\n" + "合計：" + totalTime + "H" + "\n"
         dailyReportContents += breakDownTotal
 
