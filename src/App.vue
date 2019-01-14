@@ -44,6 +44,9 @@
                               <v-btn small icon color="error" v-on:click="removeTask(taskPlans, index)">
                                 <v-icon small>delete_forever</v-icon>
                               </v-btn>
+                              <v-btn small icon color="success" v-on:click="copyTask(taskPlans, index)">
+                                <v-icon small>file_copy</v-icon>
+                              </v-btn>
                             </v-flex>
                           </v-layout>
                         </v-form>
@@ -112,6 +115,9 @@
                           <v-flex md1>
                             <v-btn small icon color="error" v-on:click="removeTask(taskResults, index)">
                               <v-icon small>delete_forever</v-icon>
+                            </v-btn>
+                            <v-btn small icon color="success" v-on:click="copyTask(taskResults, index)">
+                              <v-icon small>file_copy</v-icon>
                             </v-btn>
                           </v-flex>
                         </v-layout>
@@ -265,6 +271,14 @@
       },
       removeTask (tasks, index) {
         tasks.splice(index, 1)
+      },
+      copyTask (tasks, index) {
+        let copyTask = JSON.stringify(tasks[index])
+        copyTask = JSON.parse(copyTask)
+        copyTask.id = this.idIndex
+        this.idIndex++
+
+        tasks.splice(index, 0, copyTask)
       },
       copyTaskPlans() {
         // 参照渡しされないように一度文字列化
