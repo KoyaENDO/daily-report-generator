@@ -269,10 +269,10 @@
           let breakDownContent = ""
           if (key in planBreakDownArray) {
             let difference = Math.round((this[key] - planBreakDownArray[key]) * 100 / 60) / 100
-            let differenceString = difference > 0 ? ("+" + String(difference)) : String(difference)
-            breakDownContent = "【" + key + "】" + hour + "H (" + differenceString + "H)" + "\n"
+            let differenceString = difference > 0 ? ("+" + difference.toFixed(1)) : difference.toFixed(1)
+            breakDownContent = "【" + key + "】" + hour.toFixed(1) + "H (" + differenceString + "H)" + "\n"
           } else {
-            breakDownContent = "【" + key + "】" + hour + "H (+" + String(hour) + "H)" + "\n"
+            breakDownContent = "【" + key + "】" + hour.toFixed(1) + "H (+" + hour.toFixed(1) + "H)" + "\n"
           }
           dailyReportContents += breakDownContent
         }, resultBreakDownArray);
@@ -282,12 +282,12 @@
           if (!(key in resultBreakDownArray)) {
             let hour = Math.round(this[key] * 100 / 60) / 100
 
-            let breakDownContent = "【" + key + "】0H (-" + String(hour) + "H)" + "\n"
+            let breakDownContent = "【" + key + "】0.0H (-" + hour.toFixed() + "H)" + "\n"
             dailyReportContents += breakDownContent
           }
         }, planBreakDownArray)
 
-        let breakDownTotal = "\n" + "合計：" + totalTime + "H" + "\n"
+        let breakDownTotal = "\n" + "合計：" + totalTime.toFixed(1) + "H" + "\n"
         dailyReportContents += breakDownTotal
 
         return dailyReportContents
@@ -385,10 +385,10 @@
         Object.keys(breakDownArray).forEach(function(key) {
           let hour = Math.round(this[key] * 100 / 60) / 100
           totalTime += hour
-          let breakDownContent = "【" + key + "】" + hour + "H" + "\n"
+          let breakDownContent = "【" + key + "】" + hour.toFixed(1) + "H" + "\n"
           dailyReportContents += breakDownContent
         }, breakDownArray);
-        let breakDownTotal = "\n" + "合計：" + totalTime + "H" + "\n"
+        let breakDownTotal = "\n" + "合計：" + totalTime.toFixed(1) + "H" + "\n"
         dailyReportContents += breakDownTotal
 
         return dailyReportContents
