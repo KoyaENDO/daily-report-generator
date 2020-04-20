@@ -18,7 +18,7 @@
                     予定と実績を全て削除&nbsp;&nbsp;
                     <v-icon>delete_forever</v-icon>
                   </v-btn>
-                  <v-btn class="center" color="warning" v-on:click="reset()">
+                  <v-btn class="center" color="warning" v-on:click="restore()">
                     復元&nbsp;&nbsp;
                     <v-icon>restore</v-icon>
                   </v-btn>
@@ -27,8 +27,11 @@
                     <v-icon>library_add</v-icon>
                   </v-btn>
                 </div>
-                <draggable v-model="taskPlans" :options="{handle:'.grip-area'}">
-                  <v-card v-for="(task, index) in taskPlans" :key="task.id">
+                <draggable
+                  v-model="taskPlans"
+                  :options="{ handle: '.grip-area' }"
+                >
+                  <v-card v-for="(task, index) in taskPlans" :key="index">
                     <v-card-text raised>
                       <v-form>
                         <v-layout wrap>
@@ -36,10 +39,16 @@
                             <div class="grip-area"></div>
                           </v-flex>
                           <v-flex md4>
-                            <v-text-field v-model="task.category" label="カテゴリ"></v-text-field>
+                            <v-text-field
+                              v-model="task.category"
+                              label="カテゴリ"
+                            ></v-text-field>
                           </v-flex>
                           <v-flex md4>
-                            <v-text-field v-model="task.content" label="内容"></v-text-field>
+                            <v-text-field
+                              v-model="task.content"
+                              label="内容"
+                            ></v-text-field>
                           </v-flex>
                           <v-flex md2>
                             <v-text-field
@@ -81,7 +90,11 @@
                 <v-card-title>Output</v-card-title>
                 <v-layout wrap>
                   <v-flex xs6 offset-md1 md2>
-                    <v-text-field type="time" v-model="openingTime" label="開始時刻"></v-text-field>
+                    <v-text-field
+                      type="time"
+                      v-model="openingTime"
+                      label="開始時刻"
+                    ></v-text-field>
                   </v-flex>
                   <v-flex xs6 md9>
                     <div class="text-xs-right">
@@ -118,7 +131,11 @@
               <v-card>
                 <v-card-title>Input</v-card-title>
                 <div class="text-xs-right">
-                  <v-btn class="left" color="success" v-on:click="copyTaskPlans()">
+                  <v-btn
+                    class="left"
+                    color="success"
+                    v-on:click="copyTaskPlans()"
+                  >
                     予定から実績を作成&nbsp;&nbsp;
                     <v-icon>input</v-icon>
                   </v-btn>
@@ -127,8 +144,11 @@
                     <v-icon>library_add</v-icon>
                   </v-btn>
                 </div>
-                <draggable v-model="taskResults" :options="{handle:'.grip-area'}">
-                  <v-card v-for="(task, index) in taskResults" :key="task.id">
+                <draggable
+                  v-model="taskResults"
+                  :options="{ handle: '.grip-area' }"
+                >
+                  <v-card v-for="(task, index) in taskResults" :key="index">
                     <v-card-text raised>
                       <v-form>
                         <v-layout wrap>
@@ -136,10 +156,16 @@
                             <div class="grip-area"></div>
                           </v-flex>
                           <v-flex md4>
-                            <v-text-field v-model="task.category" label="カテゴリ"></v-text-field>
+                            <v-text-field
+                              v-model="task.category"
+                              label="カテゴリ"
+                            ></v-text-field>
                           </v-flex>
                           <v-flex md4>
-                            <v-text-field v-model="task.content" label="内容"></v-text-field>
+                            <v-text-field
+                              v-model="task.content"
+                              label="内容"
+                            ></v-text-field>
                           </v-flex>
                           <v-flex md2>
                             <v-text-field
@@ -181,7 +207,11 @@
                 <v-card-title>Output</v-card-title>
                 <v-layout wrap>
                   <v-flex xs6 offset-md1 md2>
-                    <v-text-field type="time" v-model="openingTime" label="開始時刻"></v-text-field>
+                    <v-text-field
+                      type="time"
+                      v-model="openingTime"
+                      label="開始時刻"
+                    ></v-text-field>
                   </v-flex>
                   <v-flex xs6 md9>
                     <div class="text-xs-right">
@@ -219,6 +249,14 @@
       全てのタスクを削除しました
       <v-btn color="pink" flat @click="deleteSuccess = false">Close</v-btn>
     </v-snackbar>
+    <v-snackbar v-model="restoreSuccess" top right :timeout="timeout">
+      ひとつ前の予定と実績を復元しました
+      <v-btn color="pink" flat @click="restoreSuccess = false">Close</v-btn>
+    </v-snackbar>
+    <v-snackbar v-model="noPreviousData" top right :timeout="timeout">
+      削除されたものがないため、復元できませんでした
+      <v-btn color="pink" flat @click="restoreSuccess = false">Close</v-btn>
+    </v-snackbar>
   </v-app>
 </template>
 
@@ -229,45 +267,57 @@ import clipboard from "clipboard";
 export default {
   name: "app",
   components: {
-    draggable
+    draggable,
   },
   data() {
     return {
       clipBoard: null,
       copySuccess: false,
       deleteSuccess: false,
+      restoreSuccess: false,
       timeout: 2000,
-      idIndex: 1,
       taskPlans: [],
       taskResults: [],
-      openingTime: "09:30"
+      previousTaskPlans: [],
+      previousTaskResults: [],
+      noPreviousData: false,
+      openingTime: "09:30",
     };
   },
   watch: {
-    idIndex: function(val) {
-      localStorage.idIndex = val;
-    },
     taskPlans: {
-      handler: function(val) {
+      handler: function (val) {
         localStorage.taskPlans = JSON.stringify(val);
       },
-      deep: true
+      deep: true,
     },
     taskResults: {
-      handler: function(val) {
+      handler: function (val) {
         localStorage.taskResults = JSON.stringify(val);
       },
-      deep: true
+      deep: true,
     },
-    openingTime: function(val) {
+    previousTaskPlans: {
+      handler: function (val) {
+        localStorage.previousTaskPlans = JSON.stringify(val);
+      },
+      deep: true,
+    },
+    previousTaskResults: {
+      handler: function (val) {
+        localStorage.previousTaskResults = JSON.stringify(val);
+      },
+      deep: true,
+    },
+    openingTime: function (val) {
       localStorage.openingTime = val;
-    }
+    },
   },
   computed: {
-    dailyReportPlan: function() {
+    dailyReportPlan: function () {
       return this.generateDailyReportPlan();
     },
-    dailyReportResult: function() {
+    dailyReportResult: function () {
       let dailyReportContents = "";
 
       dailyReportContents += this.generateDailyReportPlan();
@@ -290,7 +340,7 @@ export default {
       dailyReportContents += "＜実績の内訳＞" + "\n";
 
       // 実績をもとに内訳を算出
-      Object.keys(resultBreakDownArray).forEach(function(key) {
+      Object.keys(resultBreakDownArray).forEach(function (key) {
         let hour = Math.round((this[key] * 100) / 60) / 100;
         totalTime += hour;
 
@@ -327,7 +377,7 @@ export default {
       }, resultBreakDownArray);
 
       // 予定をもとに実績になかったものの内訳を算出
-      Object.keys(planBreakDownArray).forEach(function(key) {
+      Object.keys(planBreakDownArray).forEach(function (key) {
         if (!(key in resultBreakDownArray)) {
           let hour = Math.round((this[key] * 100) / 60) / 100;
 
@@ -342,34 +392,47 @@ export default {
 
       return dailyReportContents;
     },
-    dailyReportPlanRows: function() {
+    dailyReportPlanRows: function () {
       return this.dailyReportPlan.split("\n").length;
     },
-    dailyReportResultRows: function() {
+    dailyReportResultRows: function () {
       return this.dailyReportResult.split("\n").length;
-    }
+    },
   },
   methods: {
     reset() {
-      this.idIndex = 1;
+      this.storePreviousData();
       this.taskPlans = [];
       this.taskResults = [];
       this.openingTime = "09:30";
-
       this.deleteSuccess = true;
     },
-    addTask(tasks) {
-      tasks.push({ id: this.idIndex, category: "", content: "", time: 0 });
-      this.idIndex++;
+    restore() {
+      if (this.previousTaskPlans.length || this.previousTaskResults.length) {
+        this.taskPlans = this.previousTaskPlans;
+        this.taskResults = this.previousTaskResults;
+        this.restoreSuccess = true;
+      } else {
+        this.noPreviousData = true;
+      }
     },
-    removeTask(tasks, index) {
+    storePreviousData() {
+      // 参照渡しを防ぐ
+      let tmpTasks = JSON.stringify(this.taskPlans);
+      let tmpResults = JSON.stringify(this.taskResults);
+      this.previousTaskPlans = JSON.parse(tmpTasks);
+      this.previousTaskResults = JSON.parse(tmpResults);
+    },
+    addTask(tasks) {
+      tasks.push({ category: "", content: "", time: 0 });
+    },
+    async removeTask(tasks, index) {
+      this.storePreviousData();
       tasks.splice(index, 1);
     },
     copyTask(tasks, index) {
       let copyTask = JSON.stringify(tasks[index]);
       copyTask = JSON.parse(copyTask);
-      copyTask.id = this.idIndex;
-      this.idIndex++;
 
       tasks.splice(index, 0, copyTask);
     },
@@ -390,7 +453,7 @@ export default {
     generateTaskContents(tasks, startTime) {
       let taskContents = "";
 
-      tasks.forEach(function(task) {
+      tasks.forEach(function (task) {
         let startTimeNumber = startTime.split(":");
         let endDate = new Date(
           2019,
@@ -418,7 +481,7 @@ export default {
     generateBreakDownArray(tasks) {
       let breakDownArray = {};
 
-      tasks.forEach(function(task) {
+      tasks.forEach(function (task) {
         if (task.category in breakDownArray) {
           breakDownArray[task.category] += Number(task.time);
         } else {
@@ -445,7 +508,7 @@ export default {
       let breakDownArray = this.generateBreakDownArray(this.taskPlans);
       let totalTime = 0;
       dailyReportContents += "＜予定の内訳＞" + "\n";
-      Object.keys(breakDownArray).forEach(function(key) {
+      Object.keys(breakDownArray).forEach(function (key) {
         let hour = Math.round((this[key] * 100) / 60) / 100;
         totalTime += hour;
         let breakDownContent = "【" + key + "】" + hour.toFixed(2) + "H" + "\n";
@@ -455,14 +518,14 @@ export default {
       dailyReportContents += breakDownTotal;
 
       return dailyReportContents;
-    }
+    },
   },
-  mounted: function() {
+  mounted: function () {
     // -- クリップボード設定
     this.clipBoard = new clipboard(".clipcopy");
     this.clipBoard.on(
       "success",
-      function(e) {
+      function (e) {
         this.copySuccess = true;
         e.clearSelection();
       },
@@ -471,19 +534,23 @@ export default {
     // -- クリップボード設定ここまで
 
     // ローカルストレージ取得
-    if (localStorage.idIndex) {
-      this.idIndex = localStorage.idIndex;
-    }
+
     if (localStorage.taskPlans) {
       this.taskPlans = JSON.parse(localStorage.taskPlans);
     }
     if (localStorage.taskResults) {
       this.taskResults = JSON.parse(localStorage.taskResults);
     }
+    if (localStorage.previousTaskPlans) {
+      this.previousTaskPlans = JSON.parse(localStorage.previousTaskPlans);
+    }
+    if (localStorage.previousTaskResults) {
+      this.taskResults = JSON.parse(localStorage.taskResults);
+    }
     if (localStorage.openingTime) {
       this.openingTime = localStorage.openingTime;
     }
-  }
+  },
 };
 </script>
 
